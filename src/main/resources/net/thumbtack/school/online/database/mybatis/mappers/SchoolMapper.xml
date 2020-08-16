@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.thumbtack.school.online.database.mybatis.mappers.SchoolMapper">
+    <resultMap id="resultSchool" type="net.thumbtack.school.online.database.model.School">
+        <id property="idSchool" column="idSchool"/>
+        <result property="nameSchool" column="nameSchool"/>
+        <result property="year" column="year"/>
+        <collection property="groups" column="idGroup" javaType="java.util.List"
+                    ofType="net.thumbtack.school.online.database.model.Group">
+            <result property="idGroup" column="idGroup"/>
+            <result property="nameGroup" column="nameGroup"/>
+            <result property="room" column="room"/>
+            <collection property="trainees" column="idGroup" javaType="java.util.List"
+                        ofType="net.thumbtack.school.online.database.model.Trainee">
+                <result property="idTrainee" column="idTrainee"/>
+                <result property="firstname" column="firstname"/>
+                <result property="lastname" column="lastname"/>
+                <result property="rating" column="rating"/>
+            </collection>
+            <collection property="subjects" column="idGroup" javaType="java.util.List"
+                        ofType="net.thumbtack.school.online.database.model.Subject">
+                <result property="idSubject" column="idSubject"/>
+                <result property="nameSubject" column="nameSubject"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="getAllUsingJoin" resultMap="resultSchool">
+        SELECT idSchool, nameSchool, year, idGroup,
+        nameGroup, room, idTrainee, firstname, lastname, rating, idSubject, nameSubject
+        FROM school
+        LEFT JOIN `group` ON idSchool = schoolid
+        LEFT JOIN trainee ON idGroup = trainee.groupid
+        LEFT JOIN subject_group ON subject_group.groupid = idGroup
+        LEFT JOIN subject ON subject_group.subjectid = idSubject
+    </select>
+</mapper>
